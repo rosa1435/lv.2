@@ -5,6 +5,7 @@
   "repository": "https://github.com/rosa1435/lv.2.git",
   "author": "rosa1435 <158241447+rosa1435@users.noreply.github.com>",
   "license": "MIT",
+  "type": "module",
   "dependencies": {
     "@prisma/client": "^5.10.2",
     "cookie-parser": "^1.4.6",

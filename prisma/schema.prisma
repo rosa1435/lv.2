@@ -9,6 +9,34 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+// 리뷰 테이블
+model Reviews {
+  reviewId Int @id @default(autoincrement()) @map("reviewId")
+  bookTitle String @map("bookTitle")
+  reviewTitle String @map("reviewTitle")
+  reviewContent String @db.Text @map("reviewContent")
+  starRating Int @map("starRating")
+  author String @map("starRating")
+  password String @map("password")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+  
+  @@map("Reviews")
+}
+
+// 댓글 테이블
+model Comments {
+  commentId Int @id @default(autoincrement()) @map("commentId")
+  content String @map("content")
+  author String @map("starRating")
+  password String @map("password")
+  createdAt DateTime @default(now()) @map("createdAt")
+  updatedAt DateTime @updatedAt @map("updatedAt")
+  
+  @@map("Comments")
+}
+
