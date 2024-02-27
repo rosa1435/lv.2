@@ -5,7 +5,6 @@ const router = express.Router();
 
 // 리뷰 등록
 router.post('/reviews', async (req, res, next) => {
-    // 사용자로부터 입력값 받아오기.
     const {
         bookTitle,
         reviewTitle,
@@ -40,9 +39,7 @@ router.post('/reviews', async (req, res, next) => {
         },
     });
 
-    return res
-        .status(200)
-        .json({ data: newReview, message: '책 리뷰를 등록하였습니다.' });
+    return res.status(200).json({ message: '책 리뷰를 등록하였습니다.' });
 });
 
 // 리뷰 목록 조회
@@ -57,10 +54,10 @@ router.get('/reviews', async (req, res, next) => {
             createdAt: true,
             updatedAt: true,
         },
-        // createdAt 필드를 기준으로 내림차순으로 정렬
+
         orderBy: {
             createdAt: 'desc',
-        },
+        }, // createdAt 필드를 기준으로 내림차순으로 정렬
     });
     return res.status(200).json({ data: reviews });
 });
@@ -78,8 +75,7 @@ router.get('/reviews/:reviewId', async (req, res, next) => {
 
     const review = await prisma.reviews.findFirst({
         where: {
-            // params로 전달 받은 값은 String 타입이기 때문에 숫자형으로 타입 변경해준다.
-            reviewId: +reviewId,
+            reviewId: +reviewId, // params로 전달 받은 값은 String 타입이기 때문에 숫자형으로 타입 변경해준다.
         },
         select: {
             reviewId: true,
@@ -140,6 +136,10 @@ router.put('/reviews/:reviewId', async (req, res, next) => {
             reviewTitle: reviewTitle,
             reviewContent: reviewContent,
             starRating: starRating,
+            password: password,
+        },
+        where: {
+            reviewId: +reviewId,
             password: password,
         },
     });
