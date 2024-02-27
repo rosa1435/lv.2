@@ -3,7 +3,7 @@ import { prisma } from '../utils/prisma/index.js';
 
 const router = express.Router();
 
-// 리뷰 등록
+// 리뷰 등록 API
 router.post('/reviews', async (req, res, next) => {
     const { bookTitle, title, content, starRating, author, password } =
         req.body;
@@ -18,7 +18,7 @@ router.post('/reviews', async (req, res, next) => {
     ) {
         return res
             .status(400)
-            .json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
+            .json({ message: '데이터 형식이 올바르지 않습니다.' });
     }
 
     // 새 리뷰 생성
@@ -63,7 +63,7 @@ router.get('/reviews/:reviewId', async (req, res, next) => {
     if (!reviewId) {
         return res
             .status(400)
-            .json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
+            .json({message: '데이터 형식이 올바르지 않습니다.' });
     }
 
     const review = await prisma.reviews.findFirst({
@@ -86,7 +86,7 @@ router.get('/reviews/:reviewId', async (req, res, next) => {
     if (!review) {
         return res
             .status(404)
-            .json({ errorMessage: '해당하는 리뷰가 존재하지 않습니다.' });
+            .json({message: '해당하는 리뷰가 존재하지 않습니다.' });
     }
 
     return res.status(200).json({ data: review });
@@ -107,19 +107,19 @@ router.put('/reviews/:reviewId', async (req, res, next) => {
     if (!reviewId || !password) {
         return res
             .status(400)
-            .json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
+            .json({message: '데이터 형식이 올바르지 않습니다.' });
     }
     // reviewId에 해당하는 리뷰가 존재하지 않을 경우
     if (!review) {
         return res
             .status(404)
-            .json({ errorMessage: '존재하지 않는 리뷰입니다.' });
+            .json({message: '존재하지 않는 리뷰입니다.' });
     }
     // 비밀번호 일치하지 않을 경우
     if (review.password !== password) {
         return res
             .status(401)
-            .json({ errorMessage: '비밀번호가 일치하지 않습니다.' });
+            .json({message: '비밀번호가 일치하지 않습니다.' });
     }
 
     await prisma.reviews.update({
@@ -153,19 +153,19 @@ router.delete('/reviews/:reviewId', async (req, res, next) => {
     if (!reviewId || !password) {
         return res
             .status(400)
-            .json({ errorMessage: '데이터 형식이 올바르지 않습니다.' });
+            .json({message: '데이터 형식이 올바르지 않습니다.' });
     }
     // reviewId에 해당하는 리뷰가 존재하지 않을 경우
     if (!review) {
         return res
             .status(404)
-            .json({ errorMessage: '존재하지 않는 리뷰입니다.' });
+            .json({message: '존재하지 않는 리뷰입니다.' });
     }
     // 비밀번호 일치하지 않을 경우
     if (review.password !== password) {
         return res
             .status(401)
-            .json({ errorMessage: '비밀번호가 일치하지 않습니다.' });
+            .json({message: '비밀번호가 일치하지 않습니다.' });
     }
 
     await prisma.reviews.delete({

@@ -3,20 +3,16 @@ import { prisma } from '../utils/prisma/index.js';
 
 const router = express.Router();
 
-
-//router.post('/', async (req, res) => {});
-
-
 // 댓글 등록 API
 router.post('/reviews/:reviewId/comments', async (req, res) => {
     const {content, author, password} = req.body;
     const {reviewId} = req.params;
 
-    if(!author || !password || !reviewId){
-        return res.status(400).json({message: "데이터 형식이 올바르지 않습니다."}) // body 또는 params를 입력받지 못한 경우
+    if(!author || !password || !reviewId){   // body 또는 params를 입력받지 못한 경우
+        return res.status(400).json({message: "데이터 형식이 올바르지 않습니다."})
     }
 
-    const review = await prisma.reviews.findUnique({
+    const review = await prisma.reviews.findUnique({ // reviews테이블에서 params로 받은 id를 찾음
         where: { id: +reviewId }
     });
     
@@ -24,7 +20,7 @@ router.post('/reviews/:reviewId/comments', async (req, res) => {
         return res.status(404).json({message: "존재하지않는 리뷰 입니다."})
     }
 
-    if(!content){
+    if(!content){// 댓글 내용이 입력되지 않았을때
         return res.status(400).json({message: "댓글 내용을 입력해주세요."})
     }
 
@@ -45,13 +41,13 @@ router.post('/reviews/:reviewId/comments', async (req, res) => {
 router.get('/reviews/:reviewId/comments', async (req, res) => {
     const {reviewId} = req.params;
 
-    const review = await prisma.reviews.findUnique({
+    const review = await prisma.reviews.findUnique({  // reviews테이블에서 params로 받은 id를 찾음
         where: {
             id: +reviewId
         }
     });
 
-    if(!review) {
+    if(!review) {// 리뷰가 존재하지 않을때
         return res.status(404).json({message: '존재하지 않는 리뷰입니다.'})
     };
 
@@ -80,25 +76,25 @@ router.put('/reviews/:reviewId/comments/:commentId', async (req, res) => {
     const { reviewId, commentId } = req.params;
     const {content, password} = req.body;
 
-    if(!reviewId || !commentId || !content || !password) {
+    if(!reviewId || !commentId || !content || !password) {   // body 또는 params를 입력받지 못한 경우
         return res.status(400).json({Message: '데이터 형식이 올바르지 않습니다.'})
     }
 
-    const review = await prisma.reviews.findUnique({
+    const review = await prisma.reviews.findUnique({ // reviews테이블에서 params로 받은 id를 찾음
         where: {
             id: +reviewId
         }
     });
 
-    if(!review) {
+    if(!review) { // 리뷰가 존재하지 않을때
         return res.status(404).json({message: '존재하지 않는 리뷰입니다.'})
     };
     
-    if(!content){
+    if(!content){ // 댓글내용이 입력되지 않았을 때
         return res.status(400).json({message: "댓글 내용을 입력해주세요."})
     }
 
-    const findcommentId = await prisma.comments.findUnique({ // reviews테이블안에 reviewId를 찾음
+    const findcommentId = await prisma.comments.findUnique({ // comments에서 commentId 찾음
         where: {
             id: +commentId
     }});
@@ -107,7 +103,7 @@ router.put('/reviews/:reviewId/comments/:commentId', async (req, res) => {
         return res.status(401).json({message: '비밀번호가 일치하지 않습니다.' });
     };
 
-    await prisma.comments.update({
+    await prisma.comments.update({ // 목록에 댓글 내용을 업데이트
         data: {
             content: content,
         },
@@ -125,25 +121,25 @@ router.delete('/reviews/:reviewId/comments/:commentId', async(req,res,next)=>{
     const {reviewId, commentId} = req.params;
     const {password} = req.body;
 
-    if(!reviewId || !commentId || !password ) {
+    if(!reviewId || !commentId || !password ) {    // body 또는 params를 입력받지 못한 경우
         return res.status(400).json({message: '데이터 형식이 올바르지 않습니다.'});
     }
 
-    const comment = await prisma.comments.findUnique({
+    const comment = await prisma.comments.findUnique({  // comments테이블안에 commentId를 찾음
         where: {
             id: +commentId
         }
     });
 
-    if(!comment) {
+    if(!comment) {  // 리뷰가 존재하지 않을때
         return res.status(404).json({message: '존재하지 않는 리뷰입니다.'})
     }
 
-    if(comment.password !== password) {
+    if(comment.password !== password) {  // 비밀번호 일치하지 않을 경우
         return res.status(401).json({message: '비밀번호가 일치하지 않습니다.'});
     }
 
-    await prisma.comments.delete({
+    await prisma.comments.delete({ // 해당하는 댓글 삭제
         where: {
             id: +commentId
         }
