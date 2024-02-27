@@ -41,7 +41,8 @@ router.post('/reviews/:reviewId/comments', async (req, res) => {
 });
 
 
-// 댓글 목록 조회 API
+// 댓글 목록 조회 API  
+//::=> ID명이랑 commentId명이랑 데이터테이블에서 변경 필요 400 body 에러메세지 생성 필요
 router.get('/reviews/:reviewId/comments', async (req, res) => {
     const {reviewId} = req.params;
 
@@ -56,12 +57,12 @@ router.get('/reviews/:reviewId/comments', async (req, res) => {
         }
 
 
-    const commentsList = await prisma.comments.findMany({ // reviewId가 일치하는 목록 생성
+    const data = await prisma.comments.findMany({ // reviewId가 일치하는 목록 생성
         where: {
-            reviewId: reviewId,
+            reviewId: +reviewId,
         },
         select: {
-            id: true,
+            commentId: true,
             content: true,
             author: true,
             createdAt: true,
@@ -72,7 +73,7 @@ router.get('/reviews/:reviewId/comments', async (req, res) => {
         }
     });
 
-    return res.status(200).json({commentsList}) // 목록 리턴
+    return res.status(200).json({data}) // 목록 리턴
 });
 
 
