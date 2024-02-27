@@ -12,19 +12,8 @@ router.post('/reviews/:reviewId/comments', async (req, res) => {
     const {content, author, password} = req.body;
     const {reviewId} = req.params;
 
-
     if(!content || !author || !password || !reviewId){
         return res.status(400).json({message: "데이터 형식이 올바르지 않습니다."}) // body 또는 params를 입력받지 못한 경우
-    }
-
-    const findreviewId = await prisma.reviews.findUnique({ // reviews테이블안에 reviewId를 찾음
-        where: {
-            reviewId: +reviewId
-        }
-    });
-
-    if(!findreviewId){
-        return res.status(404).json({message: "존재하지 않는 리뷰입니다."}) // reviewId가 존재하지 않을 경우
     }
 
     const comment = await prisma.comments.create({ // 댓글을 데이터베이스에 push하는 부분
@@ -36,7 +25,6 @@ router.post('/reviews/:reviewId/comments', async (req, res) => {
         }
     });
 
-
     return res.status(201).json({message: "댓글을 등록하였습니다."}) // 성공적으로 댓글등록 완료
 });
 
@@ -46,23 +34,12 @@ router.post('/reviews/:reviewId/comments', async (req, res) => {
 router.get('/reviews/:reviewId/comments', async (req, res) => {
     const {reviewId} = req.params;
 
-
-    const findreviewId = await prisma.reviews.findUnique({ // reviews테이블안에 reviewId를 찾음
-        where: {
-            reviewId: +reviewId
-        }});
-
-        if (!findreviewId) { // reviewId가 존재하지 않을 경우 에러메셎지
-            return res.status(404).json({message: "존재하지 않는 리뷰입니다."});
-        }
-
-
     const data = await prisma.comments.findMany({ // reviewId가 일치하는 목록 생성
         where: {
             reviewId: +reviewId,
         },
         select: {
-            commentId: true,
+            id: true,
             content: true,
             author: true,
             createdAt: true,
@@ -77,5 +54,66 @@ router.get('/reviews/:reviewId/comments', async (req, res) => {
 });
 
 
+// 댓글 수정 API
+router.put('/reviews/:reviewId/comments/:commentId', async (req, res) => {
+    const { reviewId, commentId } = req.params;
+    const {content, password} = req.body;
+
+        const findcommentId = await prisma.comments.findUnique({ // reviews테이블안에 reviewId를 찾음
+            where: {
+                id: +commentId
+            }});
+    
+            if (!findcommentId) { // commentId가 존재하지 않을 경우 에러메세지
+                return res.status(404).json({message: "댓글 내용을 입력해주세요"});
+            };
+
+        if (findcommentId.password !== password) {  // 비밀번호 일치하지 않을 경우
+        return res.status(401).json({ errorMessage: '비밀번호가 일치하지 않습니다.' });
+    };
+
+    await prisma.comments.update({
+        data: {
+            content: content,
+        },
+        where: {
+            id: +commentId,
+            password: password,
+        }
+    });
+
+    return res.status(200).json({message: "댓글을 수정하였습니다."})
+});
+
+// 댓글 삭제 API
+router.delete('/reviews/:reviewId/comments/:commentId', async(req,res,next)=>{
+    const {reviewId, commentId} = req.params;
+    const {password} = req.body;
+
+    if(!reviewId || !commentId || !password ) {
+        return res.status(400).json({errorMessage: '데이터 형식이 올바르지 않습니다.'});
+    }
+
+    const comment = await prisma.comments.findUnique({
+        where: {
+            id: +commentId
+        }
+    });
+
+    // if(!comment) {
+    //     return res.status(404).json({errorMessage: '존재하지 않는 리뷰입니다.'})
+    // }
+
+    if(comment.password !== password) {
+        return res.status(401).json({errorMessage: '비밀번호가 일치하지 않습니다.'});
+    }
+
+    await prisma.comments.delete({
+        where: {
+            id: +commentId
+        }
+    });
+    return res.status(200).json({data: '댓글을 삭제하였습니다.'})
+});
 
 export default router;
