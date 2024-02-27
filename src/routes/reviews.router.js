@@ -44,7 +44,20 @@ router.post('/reviews', async (req, res, next) => {
 });
 
 // 리뷰 목록 조회
-router.get('/reviews', async (req, res, next) => {});
+router.get('/reviews', async (req, res, next) => {
+    const reviews = await prisma.reviews.findMany({
+        select: {
+            reviewId: true,
+            bookTitle: true,
+            reviewTitle: true,
+            author: true,
+            starRating: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+    return res.status(200).json({ data: reviews });
+});
 
 // 리뷰 상세 조회
 router.get('/reviews/:reviewId', async (req, res, next) => {});

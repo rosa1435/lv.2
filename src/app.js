@@ -1,4 +1,9 @@
 import express from 'express';
+
+import dotenv from 'dotenv';
+dotenv.config();
+console.log(process.env.DATABASE_URL);
+
 import reviewRouter from './routes/comments.router.js';
 import commentRouter from './routes/reviews.router.js';
 
