@@ -20,7 +20,7 @@ model Reviews {
   reviewTitle String @map("reviewTitle")
   reviewContent String @db.Text @map("reviewContent")
   starRating Int @map("starRating")
-  author String @map("starRating")
+  author String @map("author")
   password String @map("password")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
@@ -32,7 +32,7 @@ model Reviews {
 model Comments {
   commentId Int @id @default(autoincrement()) @map("commentId")
   content String @map("content")
-  author String @map("starRating")
+  author String @map("author")
   password String @map("password")
   createdAt DateTime @default(now()) @map("createdAt")
   updatedAt DateTime @updatedAt @map("updatedAt")
