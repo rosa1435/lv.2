@@ -15,10 +15,10 @@ datasource db {
 
 // 리뷰 테이블
 model Reviews {
-  reviewId Int @id @default(autoincrement()) @map("reviewId")
+  id Int @id @default(autoincrement()) @map("reviewId")
   bookTitle String @map("bookTitle")
-  reviewTitle String @map("reviewTitle")
-  reviewContent String @db.Text @map("reviewContent")
+  title String @map("title")
+  content String @db.Text @map("content")
   starRating Int @map("starRating")
   author String @map("author")
   password String @map("password")
@@ -30,7 +30,7 @@ model Reviews {
 
 // 댓글 테이블
 model Comments {
-  commentId Int @id @default(autoincrement()) @map("commentId")
+  id Int @id @default(autoincrement()) @map("id")
   reviewId Int @map("reviewId")
   content String @map("content")
   author String @map("author")

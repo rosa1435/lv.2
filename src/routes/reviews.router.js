@@ -5,19 +5,13 @@ const router = express.Router();
 
 // 리뷰 등록
 router.post('/reviews', async (req, res, next) => {
-    const {
-        bookTitle,
-        reviewTitle,
-        reviewContent,
-        starRating,
-        author,
-        password,
-    } = req.body;
+    const { bookTitle, title, content, starRating, author, password } =
+        req.body;
 
     if (
         !bookTitle ||
-        !reviewTitle ||
-        !reviewContent ||
+        !title ||
+        !content ||
         !starRating ||
         !author ||
         !password
@@ -31,14 +25,13 @@ router.post('/reviews', async (req, res, next) => {
     const newReview = await prisma.reviews.create({
         data: {
             bookTitle: bookTitle,
-            reviewTitle: reviewTitle,
-            reviewContent: reviewContent,
+            title: title,
+            content: content,
             starRating: starRating,
             author: author,
             password: password,
         },
     });
-
     return res.status(200).json({ message: '책 리뷰를 등록하였습니다.' });
 });
 
@@ -46,9 +39,9 @@ router.post('/reviews', async (req, res, next) => {
 router.get('/reviews', async (req, res, next) => {
     const reviews = await prisma.reviews.findMany({
         select: {
-            reviewId: true,
+            id: true,
             bookTitle: true,
-            reviewTitle: true,
+            title: true,
             author: true,
             starRating: true,
             createdAt: true,
@@ -66,7 +59,7 @@ router.get('/reviews', async (req, res, next) => {
 router.get('/reviews/:reviewId', async (req, res, next) => {
     const { reviewId } = req.params;
 
-    // reviewId가 없는 경우
+    // id가 없는 경우
     if (!reviewId) {
         return res
             .status(400)
@@ -75,13 +68,13 @@ router.get('/reviews/:reviewId', async (req, res, next) => {
 
     const review = await prisma.reviews.findFirst({
         where: {
-            reviewId: +reviewId, // params로 전달 받은 값은 String 타입이기 때문에 숫자형으로 타입 변경해준다.
+            id: +reviewId, // params로 전달 받은 값은 String 타입이기 때문에 숫자형으로 타입 변경해준다.
         },
         select: {
-            reviewId: true,
+            id: true,
             bookTitle: true,
-            reviewTitle: true,
-            reviewContent: true,
+            title: true,
+            content: true,
             author: true,
             starRating: true,
             createdAt: true,
@@ -102,12 +95,11 @@ router.get('/reviews/:reviewId', async (req, res, next) => {
 // 리뷰 정보 수정
 router.put('/reviews/:reviewId', async (req, res, next) => {
     const { reviewId } = req.params;
-    const { bookTitle, reviewTitle, reviewContent, starRating, password } =
-        req.body;
+    const { bookTitle, title, content, starRating, password } = req.body;
 
     const review = await prisma.reviews.findUnique({
         where: {
-            reviewId: +reviewId,
+            id: +reviewId,
         },
     });
 
@@ -133,13 +125,13 @@ router.put('/reviews/:reviewId', async (req, res, next) => {
     await prisma.reviews.update({
         data: {
             bookTitle: bookTitle,
-            reviewTitle: reviewTitle,
-            reviewContent: reviewContent,
+            title: title,
+            content: content,
             starRating: starRating,
             password: password,
         },
         where: {
-            reviewId: +reviewId,
+            id: +reviewId,
             password: password,
         },
     });
@@ -153,7 +145,7 @@ router.delete('/reviews/:reviewId', async (req, res, next) => {
 
     const review = await prisma.reviews.findUnique({
         where: {
-            reviewId: +reviewId,
+            id: +reviewId,
         },
     });
 
@@ -177,7 +169,7 @@ router.delete('/reviews/:reviewId', async (req, res, next) => {
     }
 
     await prisma.reviews.delete({
-        where: { reviewId: +reviewId },
+        where: { id: +reviewId },
     });
     return res.status(200).json({ data: '책 리뷰를 삭제하였습니다.' });
 });
