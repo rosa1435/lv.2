@@ -37,6 +37,7 @@ router.post('/reviews', async (req, res, next) => {
             password: password,
         },
     });
+
     return res
         .status(200)
         .json({ data: newReview, message: '책 리뷰를 등록하였습니다.' });
