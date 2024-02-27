@@ -30,7 +30,6 @@ model Reviews {
 
 // 댓글 테이블
 model Comments {
-
   commentId Int @id @default(autoincrement()) @map("commentId")
   reviewId Int @map("reviewId")
   content String @map("content")
